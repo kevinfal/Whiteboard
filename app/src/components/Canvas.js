@@ -66,6 +66,7 @@ class Canvas extends Component {
         document.getElementById("X").value=coordX;
         document.getElementById("Y").value=coordY;
         //Update state, lists of lines and line coordinates to use for rendering and saving
+        //Generate line component and add to state
         this.setState({lines: [...this.state.lines, <Line key = {this.nextKey++}x = {coordX} y = {coordY}/>]});
         this.setState({lineX: [...this.state.lineX, coordX]});
         this.setState({lineY: [...this.state.lineY, coordY]});

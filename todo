@@ -1,0 +1,8 @@
+- Read saved json and construct <lines> 
+    - handle get request from react to nodejs
+    - send json of line coordinates
+    - construct new lines
+- Clear canvas function
+- Clearn canvas button
+- Clear canvas and set state lines to saved lines
+    - function

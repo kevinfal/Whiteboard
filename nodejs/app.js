@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.json());
 app.use(cors());
 
+
 app.get("/", (req, res) => {
         res.send("www pog");
 });
@@ -24,6 +25,8 @@ app.post('/save', async (req,res) => {
     }
     res.send("saved");
 });
+
+//Handle load
 
 const PORT = process.env.PORT || 8080;
 
