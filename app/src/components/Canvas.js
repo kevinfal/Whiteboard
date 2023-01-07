@@ -11,6 +11,7 @@ class Canvas extends Component {
         this.down = this.down.bind(this);
         this.connect = this.connect.bind(this);
         this.save = this.save.bind(this);
+        this.load = this.load.bind(this);
         this.formatCoords = this.formatCoords.bind(this);
 
 
@@ -20,7 +21,8 @@ class Canvas extends Component {
         this.state = {lines: [], 
             lineX: [],
             lineY: [],
-            respone: ""};
+            loadedCoords: [],
+            response: ""};
     }
     //Format the X Y Coords of each line into JSON to send to API
     formatCoords(){
@@ -41,8 +43,9 @@ class Canvas extends Component {
     //Saves the current canvas into a file on the server
     save(){
         var coords = this.formatCoords();
-        console.log(coords);
-        console.log(JSON.stringify({coords: coords,}));
+        //console.log(coords);
+        //console.log(JSON.stringify({coords: coords,}));
+        //send post request with JSON of line coordinates
         fetch('http://localhost:8080/save', {
             method: "POST",
             headers: {
@@ -52,6 +55,15 @@ class Canvas extends Component {
         })
         .then(res => res.text())
         .then(res => this.setState({response: res}));
+    }
+    //Load Canvas from server file
+    load(){
+        fetch('http://localhost:8080/load')
+            .then(res=> res.json())
+            .then((json) => {
+                this.setState({loadedCoords: Object.values(json.coords)});
+                console.log(this.state.loadedCoords);
+            });
     }
     /**
      * 
@@ -70,8 +82,6 @@ class Canvas extends Component {
         this.setState({lines: [...this.state.lines, <Line key = {this.nextKey++}x = {coordX} y = {coordY}/>]});
         this.setState({lineX: [...this.state.lineX, coordX]});
         this.setState({lineY: [...this.state.lineY, coordY]});
-
-        
     }
     /**
      * 
@@ -109,8 +119,8 @@ class Canvas extends Component {
         return (
             <div>
                 {this.board}
-                <button onClick={this.connect}>Connected?</button>
-                <button onClick={this.save}>save?</button>
+                <button onClick={this.save}>Save Canvas</button>
+                <button onClick={this.load}>Load Canvas</button>
                 <p>{this.state.response}</p>
             </div>
             
