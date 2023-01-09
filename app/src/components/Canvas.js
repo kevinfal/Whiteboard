@@ -24,6 +24,7 @@ class Canvas extends Component {
             lineX: [],
             lineY: [],
             loadedCoords: [],
+            loadedLines: [],
             response: ""};
     }
     //Format the X Y Coords of each line into JSON to send to API
@@ -68,16 +69,20 @@ class Canvas extends Component {
         .then(res => res.text())
         .then(res => this.setState({response: res}));
     }
-    load(){
-        this.loadFile();
-        this.coordsToLines();
-    }
+
     coordsToLines(){
         var newLines = [];
+        var newCoordsX = [];
+        var newCoordsY = [];
         for(var i = 0; i < this.state.loadedCoords.length; i++){
             var coords = this.state.loadedCoords[i];
-            newLines.push(<line key={i} x = {coords[0]} y={coords[1]}/>);
+            newLines.push(<Line key={i} x = {coords[0]} y={coords[1]}/>);
+            newCoordsX.push(coords[0]);
+            newCoordsY.push(coords[1]);
         }
+        this.setState({loadedLines: newLines});
+        this.setState({lineX: newCoordsX});
+        this.setState({lineY: newCoordsY});
     }
     //Load Canvas from server file
     loadFile(){
@@ -89,6 +94,13 @@ class Canvas extends Component {
                 this.setState({loadedCoords: Object.values(json.coords)});
                 //console.log(this.state.loadedCoords);
             });
+    }
+    load(){
+        this.clearLines();
+        this.loadFile();
+        this.coordsToLines();
+        this.setState({lines: this.state.loadedLines});
+        
     }
     /**
      * 
