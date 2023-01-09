@@ -12,8 +12,10 @@ class Canvas extends Component {
         this.connect = this.connect.bind(this);
         this.save = this.save.bind(this);
         this.load = this.load.bind(this);
+        this.loadFile = this.loadFile.bind(this);
+        this.coordsToLines = this.coordsToLines.bind(this);
         this.formatCoords = this.formatCoords.bind(this);
-
+        this.clearLines = this.clearLines.bind(this);
 
         //set state and variables
         this.mouseDown = false;
@@ -33,6 +35,16 @@ class Canvas extends Component {
             coords[i] = [this.state.lineX[i], this.state.lineY[i]];
         }
         return coords;
+    }
+    /**
+     * Clear current lines drawn on the board, reset lines, lineX, lineY.
+     */
+    clearLines(){
+        this.setState(
+            {lines: [], 
+            lineX: [],
+            lineY: []});
+            this.nextKey = 1;
     }
     //Connects to api, simple server connection test
     connect(){
@@ -56,13 +68,26 @@ class Canvas extends Component {
         .then(res => res.text())
         .then(res => this.setState({response: res}));
     }
-    //Load Canvas from server file
     load(){
+        this.loadFile();
+        this.coordsToLines();
+    }
+    coordsToLines(){
+        var newLines = [];
+        for(var i = 0; i < this.state.loadedCoords.length; i++){
+            var coords = this.state.loadedCoords[i];
+            newLines.push(<line key={i} x = {coords[0]} y={coords[1]}/>);
+        }
+    }
+    //Load Canvas from server file
+    loadFile(){
+        //fetch, GET request to server
         fetch('http://localhost:8080/load')
             .then(res=> res.json())
             .then((json) => {
+                //
                 this.setState({loadedCoords: Object.values(json.coords)});
-                console.log(this.state.loadedCoords);
+                //console.log(this.state.loadedCoords);
             });
     }
     /**
@@ -119,6 +144,7 @@ class Canvas extends Component {
         return (
             <div>
                 {this.board}
+                <button onClick={this.clearLines}>Clear Canvas</button>
                 <button onClick={this.save}>Save Canvas</button>
                 <button onClick={this.load}>Load Canvas</button>
                 <p>{this.state.response}</p>
